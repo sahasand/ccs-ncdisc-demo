@@ -51,7 +51,16 @@
     <div class="stat"><div class="sv">1</div><div class="sl">substantive issue (population label); other findings cosmetic</div></div>
   </div>
   <h2>The steps</h2>
-  <div class="flow"><div class="stage"><span class="sn">01</span>Protocol</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">02</span>SAP, DMP, ICF</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">03</span>Mock shells</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">04</span>Simulated EDC</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">05</span>Analysis datasets</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">06</span>Populated tables</div><span class="arr">&rsaquo;</span><div class="stage qc"><span class="sn">07</span>Independent QC (R)</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">08</span>Coded package</div></div>
+  <ol class="flow">
+    <li class="stage"><span class="sn">01</span><span class="st">Protocol</span></li>
+    <li class="stage"><span class="sn">02</span><span class="st">SAP, DMP, ICF</span></li>
+    <li class="stage"><span class="sn">03</span><span class="st">Mock shells</span></li>
+    <li class="stage"><span class="sn">04</span><span class="st">Simulated EDC</span></li>
+    <li class="stage"><span class="sn">05</span><span class="st">Analysis datasets</span></li>
+    <li class="stage"><span class="sn">06</span><span class="st">Populated tables</span></li>
+    <li class="stage qc"><span class="sn">07</span><span class="st">Independent QC (R)</span></li>
+    <li class="stage"><span class="sn">08</span><span class="st">Coded package</span></li>
+  </ol>
   <p class="note">Each step writes a file the next one reads. The pipeline is in Python; the QC was written separately in R.</p>
   <div class="scopebox"><b>Scope.</b> The data is synthetic, made for this demo. The tables are programmed straight from EDC with no CDISC layer, which suits operational and DSMB reporting; submissions still use SDTM and ADaM. Real use would add the usual review and system validation.</div>
 </section>

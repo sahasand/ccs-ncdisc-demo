@@ -195,11 +195,17 @@ section > p{max-width:74ch; color:var(--body)}
 .sl{font-family:var(--mono); font-size:var(--fs-micro); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-top:10px; line-height:1.45}
 
 /* ---- Process flow --------------------------------------------------------- */
-.flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:7px; margin:10px 0 6px}
-.stage{position:relative; display:flex; flex-direction:column; gap:5px; justify-content:center; background:var(--soft); border:1px solid var(--line-2); border-radius:var(--r-sm); padding:11px 13px; font-size:var(--fs-sm); font-weight:600; color:var(--navy); line-height:1.25}
-.stage .sn{font-family:var(--mono); font-size:var(--fs-micro); font-weight:500; color:var(--red); letter-spacing:.06em}
-.stage.qc{background:var(--navy); border-color:var(--navy); color:#fff}
+.flow{list-style:none; margin:16px 0 6px; padding:0; display:grid; grid-template-columns:repeat(4,1fr); gap:11px}
+.stage{position:relative; display:flex; flex-direction:column; gap:7px; justify-content:flex-start; background:linear-gradient(180deg,var(--soft),var(--surface)); border:1px solid var(--line-2); border-radius:var(--r-md); padding:14px 15px 13px; min-height:66px; transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.stage:hover{border-color:var(--navy-400); box-shadow:var(--sh-sm); transform:translateY(-2px)}
+.stage .sn{font-family:var(--mono); font-size:var(--fs-micro); font-weight:500; color:var(--red); letter-spacing:.12em}
+.stage .st{font-size:var(--fs-body); font-weight:600; color:var(--ink); line-height:1.28; letter-spacing:-.005em}
+.stage.qc{background:linear-gradient(180deg,var(--navy-800),var(--navy-900)); border-color:var(--navy-900); box-shadow:var(--sh-sm)}
 .stage.qc .sn{color:var(--red-on-dark)}
+.stage.qc .st{color:#fff}
+/* flow connector: a small chevron seated in the gap, within each row only */
+.stage::after{content:''; position:absolute; right:-11px; top:50%; width:8px; height:8px; transform:translateY(-50%) rotate(45deg); border-top:1.5px solid var(--line-3); border-right:1.5px solid var(--line-3); z-index:2}
+.stage:nth-child(4n)::after,.stage:last-child::after{display:none}
 .arr{align-self:center; color:var(--line-3); font-size:16px; font-weight:400; line-height:1}
 
 /* ---- Callout -------------------------------------------------------------- */
@@ -322,6 +328,8 @@ section.on>*:nth-child(n+5){animation-delay:.24s}
 @media(max-width:880px){
   .cards{grid-template-columns:1fr 1fr}
   .qcgrid{grid-template-columns:1fr 1fr}
+  .flow{grid-template-columns:repeat(2,1fr)}
+  .stage::after{display:none}
 }
 @media(max-width:720px){
   body{padding:0}
@@ -331,11 +339,10 @@ section.on>*:nth-child(n+5){animation-delay:.24s}
   .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}
   .linflow{flex-direction:column}
   .linflow .arr{transform:rotate(90deg)}
-  .flow .arr{transform:rotate(90deg)}
   .masthead h1{max-width:none}
 }
 @media(max-width:520px){
-  .cards,.cards.g2,.qcgrid{grid-template-columns:1fr}
+  .cards,.cards.g2,.qcgrid,.flow{grid-template-columns:1fr}
   .mast-status{display:none}
 }
 
