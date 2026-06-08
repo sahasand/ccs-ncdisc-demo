@@ -71,12 +71,32 @@ pre.tfl{background:#0c1c34;color:#dfe8f5;font-family:var(--mono);font-size:10.5p
 .pill.ok{background:#E7F4EC;color:#1B7740} .pill.fix{background:#FDECEE;color:#C42A37} .pill.acc{background:#EEF3FB;color:#0A2A5E}
 .scopebox{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.5;color:var(--body)}
 .scopebox b{color:var(--navy)}
+.grouptag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:700}
+.grouphd{font-size:15px;color:var(--navy);margin:24px 0 10px;display:flex;align-items:center;gap:12px}
+.grouphd::after{content:'';flex:1;height:1px;background:var(--line)}
+.lineage{background:var(--pale);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0 6px}
+.lin-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.lin-cap{font-size:12px;color:var(--slate)}
+.linflow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.linflow .arr{align-self:center}
+.linstage{flex:1;min-width:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.linstage.qc{border-color:var(--red);border-top:4px solid var(--red);background:#FFF7F8}
+.linstage .sn{font-family:var(--mono);font-size:9px;color:var(--red);font-weight:700}
+.ls-title{font-size:14px;font-weight:700;color:var(--navy)}
+.ls-desc{font-size:12px;color:var(--body);line-height:1.4;flex:1}
+.ls-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}
+.ls-foot2{flex-wrap:wrap;justify-content:flex-start;gap:6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:20px;align-self:flex-start}
+.badge.pass{background:#E7F4EC;color:#1B7740;font-size:9.5px;padding:3px 9px}
+.badge.final{background:#EEF3FB;color:var(--navy)}
+.badge.truth{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.badge.shell,.badge.input{background:var(--pale);color:var(--slate)}
 footer{background:var(--navy);color:#fff;padding:18px 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center}
 footer .ft{font-size:13px;font-weight:600}
 footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9CB2D6;text-align:right}
 .disc{background:var(--soft);border-top:1px solid var(--line);padding:9px 40px;font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--slate)}
 .disc b{color:var(--red)}
-@media(max-width:720px){.cards,.stats,.qcgrid{grid-template-columns:1fr 1fr}h1{font-size:24px}}
+@media(max-width:720px){.cards,.stats,.qcgrid{grid-template-columns:1fr 1fr}h1{font-size:24px}.linflow{flex-direction:column}.linflow .arr{transform:rotate(90deg);align-self:center}}
 </style></head>
 <body><div class="wrap">
 <header>
@@ -109,17 +129,29 @@ footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-trans
 
 <section id="docs">
   <h2>Documents and deliverables</h2>
-  <p>Each card opens a file. They are all in this folder.</p>
+  <p>Lead with the result. The table package and its independent QC come first; the plan documents and the data and code behind them follow. Each link opens a file in this folder.</p>
+
+  <div class="lineage">
+    <div class="lin-head"><span class="grouptag">Deliverable lineage</span><span class="lin-cap">Shell &rsaquo; populated &rsaquo; independently verified</span></div>
+    <div class="linflow">
+      <div class="linstage"><span class="sn">01</span><span class="badge shell">Shells</span><div class="ls-title">Mock TFL Shells</div><div class="ls-desc">Twenty-six empty shells, built from the SAP table inventory before any data exist.</div><div class="ls-foot"><span class="fn">HF-1002-CL-101_Mock_Shells.docx</span><a class="dl sm" href="HF-1002-CL-101_Mock_Shells.docx" target="_blank">Open</a></div></div>
+      <span class="arr">&rsaquo;</span>
+      <div class="linstage"><span class="sn">02</span><span class="badge final">Final</span><div class="ls-title">Final TFL Package</div><div class="ls-desc">The same shells, populated. Nine tables: eight double-programmed in QC, plus the supportive MedDRA SOC/PT table.</div><div class="ls-foot"><span class="fn">HF-1002-CL-101_Final_TFL_Package.docx</span><a class="dl sm" href="HF-1002-CL-101_Final_TFL_Package.docx" target="_blank">Open</a></div></div>
+      <span class="arr">&rsaquo;</span>
+      <div class="linstage qc"><span class="sn">03</span><span class="badge pass">QC: PASS &middot; with findings</span><div class="ls-title">Independent QC (R)</div><div class="ls-desc">The whole pipeline re-derived from scratch in R and compared cell by cell &mdash; the report, and how each finding was handled.</div><div class="ls-foot ls-foot2"><a class="dl sm" href="QC_Report.md" target="_blank">QC Report (.md)</a><a class="dl sm" href="HF-1002-CL-101_QC_Closure_Memo.docx" target="_blank">Closure Memo (.docx)</a></div></div>
+    </div>
+  </div>
+
+  <h3 class="grouphd"><span class="grouptag">Plan &amp; governance</span></h3>
+  <p class="note">The pre-specified rules, signed before database lock. The SAP is the analysis source of truth.</p>
   <div class="cards"><div class="card"><div class="card-tag">Source</div><div class="card-title">Clinical Study Protocol</div><div class="card-desc">The fictional Phase 1 protocol. Everything else is built from this.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Protocol_v1.0_06Jun2026.docx</span><a class="dl" href="HF-1002-CL-101_Protocol_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">SAP</div><div class="card-title">Statistical Analysis Plan</div><div class="card-desc">ICH E9(R1). Estimands written for a single-arm, descriptive design.</div><div class="card-foot"><span class="fn">SAP_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="SAP_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">SAP</div><div class="card-title">Statistical Analysis Plan</div><span class="badge truth">Source of truth</span><div class="card-desc">ICH E9(R1). Estimands written for a single-arm, descriptive design.</div><div class="card-foot"><span class="fn">SAP_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="SAP_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
 <div class="card"><div class="card-tag">DMP</div><div class="card-title">Data Management Plan</div><div class="card-desc">Fourteen sections. Domains and edit checks follow the protocol, with a liver-function alert.</div><div class="card-foot"><span class="fn">DMP_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="DMP_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">ICF</div><div class="card-title">Informed Consent Form</div><div class="card-desc">Gene-therapy consent. Passes the compliance check and reads at about grade 7.</div><div class="card-foot"><span class="fn">ICF_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="ICF_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">Shells</div><div class="card-title">Mock TFL Shells</div><div class="card-desc">Twenty-six empty shells, built from the SAP table inventory.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Mock_Shells.docx</span><a class="dl" href="HF-1002-CL-101_Mock_Shells.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">Tables</div><div class="card-title">Final TFL Package</div><div class="card-desc">Nine tables: eight double-programmed in QC, plus the supportive MedDRA SOC/PT table.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Final_TFL_Package.docx</span><a class="dl" href="HF-1002-CL-101_Final_TFL_Package.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">QC</div><div class="card-title">QC Closure Memo</div><div class="card-desc">The QC result and how each finding was handled.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_QC_Closure_Memo.docx</span><a class="dl" href="HF-1002-CL-101_QC_Closure_Memo.docx" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">QC</div><div class="card-title">QC Report (R)</div><div class="card-desc">The full report from the independent R re-run.</div><div class="card-foot"><span class="fn">QC_Report.md</span><a class="dl" href="QC_Report.md" target="_blank">Open</a></div></div>
-<div class="card"><div class="card-tag">Data</div><div class="card-title">Raw EDC workbook</div><div class="card-desc">Nineteen Rave-style forms, 18 subjects, about 3,580 rows.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_RawEDC_Rave.xlsx</span><a class="dl" href="HF-1002-CL-101_RawEDC_Rave.xlsx" target="_blank">Open</a></div></div>
-</div>
+<div class="card"><div class="card-tag">ICF</div><div class="card-title">Informed Consent Form</div><div class="card-desc">Gene-therapy consent. Passes the compliance check and reads at about grade 7.</div><div class="card-foot"><span class="fn">ICF_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="ICF_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div></div>
+
+  <h3 class="grouphd"><span class="grouptag">Data &amp; pipeline</span></h3>
+  <p class="note">How it was built: the raw inputs, then the programs that derive the datasets and tables.</p>
+  <div class="cards"><div class="card"><div class="card-tag">Data</div><div class="card-title">Raw EDC workbook</div><span class="badge input">Input</span><div class="card-desc">Nineteen Rave-style forms, 18 subjects, about 3,580 rows.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_RawEDC_Rave.xlsx</span><a class="dl" href="HF-1002-CL-101_RawEDC_Rave.xlsx" target="_blank">Open</a></div></div></div>
   <h3>The programs</h3>
   <table class="find"><thead><tr><th>Program</th><th>What it does</th><th></th></tr></thead><tbody><tr><td><code>01_build_analysis_datasets.py</code></td><td>Reads raw EDC, derives the analysis datasets.</td><td><a class="dl sm" href="01_build_analysis_datasets.py" target="_blank">Open</a></td></tr>
 <tr><td><code>02_generate_tables.py</code></td><td>Reads the analysis datasets, writes the populated tables.</td><td><a class="dl sm" href="02_generate_tables.py" target="_blank">Open</a></td></tr>
