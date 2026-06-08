@@ -1,4 +1,4 @@
-# CCS Non-CDISC Workflow Demo — HF-1002-CL-101
+# Non-CDISC Workflow Demo — HF-1002-CL-101
 
 A worked example of a clinical-trial analysis workflow run end to end on a **fictional**
 Phase 1 study, from source documents to QC'd tables. Open `index.html` in a browser to
