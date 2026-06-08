@@ -153,20 +153,21 @@ h1,h2,h3,p,ul{margin:0}
 .mast-meta li.warnish::before{background:var(--red)}
 
 /* ---- Tab bar -------------------------------------------------------------- */
-.tabbar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.86); backdrop-filter:saturate(140%) blur(8px); border-bottom:1px solid var(--line-2)}
-.tabbar-inner{display:flex; flex-wrap:wrap; gap:2px; padding:7px clamp(12px,2.4vw,28px); max-width:var(--maxw); margin:0 auto}
+.tabbar{position:sticky; top:0; z-index:20; background:rgba(237,242,248,.92); backdrop-filter:saturate(150%) blur(10px); border-top:1px solid rgba(255,255,255,.55); border-bottom:1px solid var(--line-2); box-shadow:0 6px 16px -10px rgba(10,28,60,.30)}
+.tabbar-inner{display:flex; flex-wrap:wrap; gap:5px; padding:9px clamp(12px,2.4vw,28px); max-width:var(--maxw); margin:0 auto; align-items:center}
+.tabbar-inner::before{content:'Sections'; flex:none; align-self:center; font-family:var(--mono); font-size:var(--fs-micro); letter-spacing:.18em; text-transform:uppercase; color:var(--red-text); white-space:nowrap; padding-right:12px; border-right:1px solid var(--line-2); margin-right:4px}
 .tab{
   position:relative; display:inline-flex; align-items:center; gap:8px; font-family:var(--sans);
-  font-size:var(--fs-sm); font-weight:500; color:var(--muted); background:none; border:0;
-  padding:11px 14px 13px; cursor:pointer; border-radius:var(--r-sm); transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);
+  font-size:var(--fs-sm); font-weight:500; color:var(--muted); background:transparent; border:1px solid transparent;
+  padding:9px 15px; cursor:pointer; border-radius:var(--r-sm);
+  transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);
 }
 .tab .tab-idx{font-family:var(--mono); font-size:var(--fs-micro); font-weight:500; letter-spacing:.06em; color:var(--muted); transition:color var(--dur-fast) var(--ease)}
-.tab::after{content:''; position:absolute; left:14px; right:14px; bottom:6px; height:2px; background:var(--red); border-radius:2px; transform:scaleX(0); transform-origin:left; transition:transform var(--dur) var(--ease)}
-.tab:hover{color:var(--navy)}
+.tab:hover{color:var(--navy); background:rgba(255,255,255,.8); border-color:var(--line-2)}
 .tab:hover .tab-idx{color:var(--navy-500)}
-.tab.on{color:var(--navy); font-weight:600}
-.tab.on .tab-idx{color:var(--red)}
-.tab.on::after{transform:scaleX(1)}
+.tab.on{color:#fff; font-weight:600; background:var(--navy); border-color:var(--navy); box-shadow:var(--sh-sm)}
+.tab.on .tab-idx{color:var(--red-on-dark)}
+.tab.on:hover{color:#fff; background:var(--navy-800)}
 
 /* ---- Sections / headings -------------------------------------------------- */
 section{display:none; padding:clamp(28px,3.4vw,46px) clamp(22px,3.6vw,52px)}
@@ -339,6 +340,7 @@ section.on>*:nth-child(n+5){animation-delay:.24s}
   .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}
   .linflow{flex-direction:column}
   .linflow .arr{transform:rotate(90deg)}
+  .tabbar-inner::before{display:none}
   .masthead h1{max-width:none}
 }
 @media(max-width:520px){
