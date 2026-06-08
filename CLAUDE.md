@@ -7,23 +7,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A **demonstration** of a clinical-trial analysis workflow run end-to-end on a *fictional*
 Phase 1 study (protocol HF-1002-CL-101). All data is synthetic; nothing here is for clinical,
 operational, or regulatory-submission use. The published deliverable is the single-page site
-`index.html`; the Python programs, documents, EDC workbook, and QC report are the supporting
-artifacts it describes. See `README.md` for the file-by-file inventory.
+(`index.html` + `styles.css` + `app.js`, with self-hosted fonts in `fonts/`); the Python programs,
+documents, EDC workbook, and QC report are the supporting artifacts it describes. See `README.md`
+for the file-by-file inventory.
 
 GitHub: `sahasand/ccs-ncdisc-demo` (currently **private**; default branch `main`). There is no
 CI, build, lint, or test setup.
 
 ## The two layers are decoupled — this is the most important thing to know
 
-1. **`index.html` is the product.** A self-contained static page: inline `<style>`, vanilla JS,
-   no framework, bundler, package manager, or build step. Edit it directly and open it in a
-   browser to view (`open index.html`). Tab navigation is hash-routed (`#overview`, `#docs`,
-   `#data`, `#tables`, `#qc`) so individual tabs are deep-linkable.
+1. **The static site is the product.** A small set of plain static files — `index.html`
+   (structure), `styles.css` (the design system), `app.js` (hash router + accessible tabs),
+   self-hosted IBM Plex woff2 in `fonts/`, and `.nojekyll` so GitHub Pages serves the assets
+   verbatim. No framework, bundler, package manager, or build step — edit the files directly.
+   Tab navigation is hash-routed (`#overview`, `#docs`, `#data`, `#tables`, `#qc`) so individual
+   tabs are deep-linkable; `show()`/`showTbl()` in `app.js` drive it. **Viewing:** serve over
+   HTTP (`python3 -m http.server`, then `http://127.0.0.1:8000/`) or use GitHub Pages — opening
+   `index.html` straight off `file://` works but falls back to system fonts (browsers block
+   `file://` font loads).
 
 2. **The Python pipeline does NOT feed the site.** The tables and figures shown in `index.html`
    (the Tables tab, the data tables) are **hand-transcribed mirrors** of the pipeline's output,
    not generated at view time. If a pipeline number changes, you must update `index.html` by
    hand to match — there is no regeneration step linking them.
+
+## Front-end design system
+
+The site uses a *"clinical instrument"* visual system defined in `styles.css`: a refined
+**navy/red** identity (navy = institutional/structure; red = signal only — DLT/death/HIGH, the
+QC step, critical accents), self-hosted **IBM Plex Sans/Mono**, and a token set of `:root` custom
+properties (color, type scale, spacing, shadows). Tone is **formal and serious — no decorative
+figures or charts.** When changing the look, *elevate this identity rather than reinventing it*:
+a prior editorial redesign (the "Transactions" fascicle, commit `b1bcecc`) was reverted for going
+too far off-brand. Keep all text at **WCAG AA** contrast, and make sure `@media print` keeps every
+TFL table visible. Note for CSS: `calc()`/`clamp()` require whitespace around `+`/`-`.
 
 ## The pipeline (programs 01 → 02 → 03)
 

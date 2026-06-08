@@ -2,119 +2,47 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Workflow demo: HF-1002-CL-101</title>
-<style>
-:root{--navy:#0A2A5E;--navyd:#051A3D;--red:#E63946;--redl:#FF6B74;--ink:#1A1A1A;--body:#3A3A3A;--slate:#6B7280;--pale:#E8F0FA;--line:#D6DEE8;--paper:#fff;--soft:#F7F9FC;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--mono:'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono','JetBrains Mono',monospace;}
-*{box-sizing:border-box}
-body{margin:0;font-family:var(--sans);color:var(--body);background:#DDE3EC;}
-a{color:var(--navy)}
-code,.mono{font-family:var(--mono)}
-.wrap{max-width:1080px;margin:0 auto;background:var(--paper);box-shadow:0 30px 80px rgba(10,42,94,.18);}
-header{background:var(--navy);color:#fff;padding:30px 40px 26px;position:relative;overflow:hidden}
-header::after{content:'';position:absolute;top:0;right:0;width:300px;height:100%;background:linear-gradient(135deg,#1E4180,var(--navyd));clip-path:polygon(35% 0,100% 0,100% 100%,0 100%);opacity:.6}
-.brand{font-size:13px;font-weight:800;letter-spacing:.04em}
-.brand small{display:block;font-weight:500;font-size:9px;letter-spacing:.12em;opacity:.7;text-transform:uppercase}
-.doclabel{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--redl);text-transform:uppercase;margin:18px 0 6px}
-h1{font-size:31px;font-weight:800;line-height:1.07;letter-spacing:-.02em;margin:0;max-width:660px;position:relative;z-index:2}
-h1 em{color:var(--redl);font-style:normal}
-.sub{margin:12px 0 0;font-size:14px;color:#CADCFC;max-width:640px;position:relative;z-index:2;line-height:1.5}
-nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px;padding:8px 28px}
-nav button{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate);background:none;border:none;padding:9px 14px;border-radius:7px;cursor:pointer}
-nav button.on,nav button.on:hover{background:var(--navy);color:#fff}
-nav button:hover{color:var(--navy)}
-section{display:none;padding:30px 40px}
-section.on{display:block}
-h2{font-size:13px;font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--navy);margin:0 0 14px;display:flex;align-items:center;gap:12px}
-h2::after{content:'';flex:1;height:1px;background:var(--line)}
-h3{font-size:15px;color:var(--navy);margin:22px 0 6px}
-p{line-height:1.55;font-size:14px}
-.lead{font-size:16px;color:var(--ink);font-weight:500;line-height:1.5}
-.lead em{font-style:normal;color:var(--red);font-weight:700}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:22px 0}
-.stat{padding:18px;border-right:1px solid var(--line);background:var(--pale)}
-.stat:last-child{border-right:none}
-.sv{font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1}
-.sl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:6px;line-height:1.4}
-.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px}
-.stage{background:var(--pale);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;color:var(--navy)}
-.stage .sn{font-family:var(--mono);font-size:9px;color:var(--red);display:block;font-weight:700}
-.stage.qc{background:var(--red);color:#fff;border-color:var(--red)}
-.stage.qc .sn{color:#fff}
-.arr{color:var(--slate);font-size:18px;font-weight:700}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.cards.g2{grid-template-columns:repeat(2,1fr)}
-.card{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--soft);display:flex;flex-direction:column}
-.card-tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:700}
-.card-title{font-size:15px;font-weight:700;color:var(--navy);margin:5px 0}
-.card-desc{font-size:12.5px;color:var(--body);line-height:1.4;flex:1}
-.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
-.fn{font-family:var(--mono);font-size:8.5px;color:var(--slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dl{background:var(--navy);color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;white-space:nowrap}
-.dl.sm{padding:3px 9px;font-size:10px}
-.na{color:var(--slate);font-size:10px}
-.data{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:11px;margin:8px 0 4px}
-.data th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px;font-weight:600;font-size:10px}
-.data td{border-bottom:1px solid var(--line);padding:5px 8px;color:var(--ink)}
-.data tr.hl td{background:#FDECEE;font-weight:600}
-.scroll{overflow-x:auto}
-.note{font-size:12.5px;color:var(--slate);margin:6px 0 0}
-.ttabs{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
-.tt{font-family:var(--mono);font-size:11px;border:1px solid var(--line);background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;cursor:pointer;font-weight:600}
-.tt.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-pre.tfl{background:#0c1c34;color:#dfe8f5;font-family:var(--mono);font-size:10.5px;line-height:1.45;padding:16px;border-radius:10px;overflow-x:auto;white-space:pre}
-.qcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 18px}
-.qcbox{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--soft);border-top:4px solid var(--red)}
-.qcbox .v{font-size:30px;font-weight:800;color:var(--navy);line-height:1}
-.qcbox .l{font-size:11.5px;color:var(--body);margin-top:8px;line-height:1.35}
-.find{border-collapse:collapse;width:100%;font-size:12.5px}
-.find th{background:var(--pale);text-align:left;padding:8px;color:var(--navy);border-bottom:1px solid var(--line)}
-.find td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.4}
-.pill{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
-.pill.ok{background:#E7F4EC;color:#1B7740} .pill.fix{background:#FDECEE;color:#C42A37} .pill.acc{background:#EEF3FB;color:#0A2A5E}
-.scopebox{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.5;color:var(--body)}
-.scopebox b{color:var(--navy)}
-.grouptag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:700}
-.grouphd{font-size:15px;color:var(--navy);margin:24px 0 10px;display:flex;align-items:center;gap:12px}
-.grouphd::after{content:'';flex:1;height:1px;background:var(--line)}
-.lineage{background:var(--pale);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0 6px}
-.lin-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.lin-cap{font-size:12px;color:var(--slate)}
-.linflow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
-.linflow .arr{align-self:center}
-.linstage{flex:1;min-width:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
-.linstage.qc{border-color:var(--red);border-top:4px solid var(--red);background:#FFF7F8}
-.linstage .sn{font-family:var(--mono);font-size:9px;color:var(--red);font-weight:700}
-.ls-title{font-size:14px;font-weight:700;color:var(--navy)}
-.ls-desc{font-size:12px;color:var(--body);line-height:1.4;flex:1}
-.ls-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}
-.ls-foot2{flex-wrap:wrap;justify-content:flex-start;gap:6px}
-.badge{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:20px;align-self:flex-start}
-.badge.pass{background:#E7F4EC;color:#1B7740;font-size:9.5px;padding:3px 9px}
-.badge.final{background:#EEF3FB;color:var(--navy)}
-.badge.truth{background:#fff;color:var(--navy);border:1px solid var(--navy)}
-.badge.shell,.badge.input{background:var(--pale);color:var(--slate)}
-footer{background:var(--navy);color:#fff;padding:18px 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center}
-footer .ft{font-size:13px;font-weight:600}
-footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9CB2D6;text-align:right}
-.disc{background:var(--soft);border-top:1px solid var(--line);padding:9px 40px;font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--slate)}
-.disc b{color:var(--red)}
-@media(max-width:720px){.cards,.stats,.qcgrid{grid-template-columns:1fr 1fr}h1{font-size:24px}.linflow{flex-direction:column}.linflow .arr{transform:rotate(90deg);align-self:center}}
-</style></head>
+<meta name="description" content="A worked example of a non-CDISC clinical-trial analysis workflow, run end to end on a fictional Phase 1 study (HF-1002-CL-101). Synthetic data; demonstration only.">
+<meta name="theme-color" content="#0A1F40">
+<meta name="color-scheme" content="light">
+<link rel="preload" href="fonts/IBMPlexSans-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/IBMPlexSans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
 <body><div class="wrap">
-<header>
-  <div class="brand">Workflow Demo<small>Non-CDISC clinical pipeline</small></div>
-  <div class="doclabel">HF-1002-CL-101 · Workflow demo</div>
+<header class="masthead">
+  <div class="mast-grid">
+    <div class="mast-brand">
+      <svg class="mast-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <rect x="1.6" y="1.6" width="26.8" height="26.8" rx="3.4" stroke="currentColor" stroke-width="1.4" opacity=".5"/>
+        <path d="M15 5.5v19M5.5 15h19" stroke="currentColor" stroke-width="1.3" opacity=".75"/>
+        <circle cx="15" cy="15" r="3.3" fill="#FF8089"/>
+      </svg>
+      <span class="mast-brand-text">Workflow Demo<small>Non-CDISC clinical pipeline</small></span>
+    </div>
+    <div class="mast-status"><span class="dot" aria-hidden="true"></span>QC: PASS · with findings</div>
+  </div>
+  <p class="doclabel">HF-1002-CL-101 · Workflow demo</p>
   <h1>One protocol, run from documents to <em>QC'd tables</em></h1>
   <p class="sub">A worked example on a fictional Phase 1 study. Everything below is a file the pipeline produced: the documents, the data, the tables, and the QC.</p>
+  <ul class="mast-meta">
+    <li>Phase 1 · Gene therapy</li>
+    <li>18 subjects · 3 cohorts</li>
+    <li>SAP-driven analysis</li>
+    <li class="warnish">Synthetic data · demo</li>
+  </ul>
 </header>
-<nav>
-  <button class="on" onclick="show('overview',this)">Overview</button>
-  <button onclick="show('docs',this)">Documents</button>
-  <button onclick="show('data',this)">The data</button>
-  <button onclick="show('tables',this)">Tables</button>
-  <button onclick="show('qc',this)">QC</button>
+<nav class="tabbar" aria-label="Sections">
+  <div class="tabbar-inner" role="tablist" aria-label="Workflow sections">
+    <button id="tab-overview" class="tab on" role="tab" aria-selected="true" aria-controls="overview" tabindex="0" onclick="show('overview',this)"><span class="tab-idx">01</span>Overview</button>
+    <button id="tab-docs" class="tab" role="tab" aria-selected="false" aria-controls="docs" tabindex="-1" onclick="show('docs',this)"><span class="tab-idx">02</span>Documents</button>
+    <button id="tab-data" class="tab" role="tab" aria-selected="false" aria-controls="data" tabindex="-1" onclick="show('data',this)"><span class="tab-idx">03</span>The data</button>
+    <button id="tab-tables" class="tab" role="tab" aria-selected="false" aria-controls="tables" tabindex="-1" onclick="show('tables',this)"><span class="tab-idx">04</span>Tables</button>
+    <button id="tab-qc" class="tab" role="tab" aria-selected="false" aria-controls="qc" tabindex="-1" onclick="show('qc',this)"><span class="tab-idx">05</span>QC</button>
+  </div>
 </nav>
 
-<section id="overview" class="on">
+<section id="overview" class="on" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
   <p class="lead">Starting from a fictional Phase 1 protocol, the pipeline wrote the SAP, DMP, and consent form, simulated the EDC data, built the analysis datasets and tables, and ran a <em>separate QC in R</em>. The tabs open the files, show the data, list the tables, and report the QC.</p>
   <div class="stats">
     <div class="stat"><div class="sv">9</div><div class="sl">documents and table sets</div></div>
@@ -128,7 +56,7 @@ footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-trans
   <div class="scopebox"><b>Scope.</b> The data is synthetic, made for this demo. The tables are programmed straight from EDC with no CDISC layer, which suits operational and DSMB reporting; submissions still use SDTM and ADaM. Real use would add the usual review and system validation.</div>
 </section>
 
-<section id="docs">
+<section id="docs" role="tabpanel" aria-labelledby="tab-docs" tabindex="0">
   <h2>Documents and deliverables</h2>
   <p>Lead with the result. The table package and its independent QC come first; the plan documents and the data and code behind them follow. Each link opens a file in this folder.</p>
 
@@ -159,7 +87,7 @@ footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-trans
 <tr><td><code>03_ae_meddra_soc_pt.py</code></td><td>Applies the coding map and assembles the final package.</td><td><a class="dl sm" href="03_ae_meddra_soc_pt.py" target="_blank">Open</a></td></tr></tbody></table>
 </section>
 
-<section id="data">
+<section id="data" role="tabpanel" aria-labelledby="tab-data" tabindex="0">
   <h2>From raw EDC to analysis datasets</h2>
   <p>The pipeline makes Rave-style raw EDC, then derives the analysis datasets. Here is one value followed through the steps: a Grade 3 liver enzyme rise in subject 1002.</p>
   <h3>1. Raw lab values, subject 1002, ALT</h3>
@@ -179,10 +107,10 @@ footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-trans
   <p class="note">Verbatim terms mapped to preferred term and system organ class. This feeds table 14.3.1.2.</p>
 </section>
 
-<section id="tables">
+<section id="tables" role="tabpanel" aria-labelledby="tab-tables" tabindex="0">
   <h2>Populated tables</h2>
   <p>The table outputs, programmed from the datasets above. Pick a table. 14.3.1.2 is shown in its MedDRA SOC/PT form &mdash; a supportive coding layer outside the R double-programming QC, which covered the by-verbatim version of this table.</p>
-  <div class="ttabs"><button class="tt on" onclick="showTbl('14.1.1',this)">14.1.1</button><button class="tt" onclick="showTbl('14.1.2',this)">14.1.2</button><button class="tt" onclick="showTbl('14.1.3',this)">14.1.3</button><button class="tt" onclick="showTbl('14.2.1.1',this)">14.2.1.1</button><button class="tt" onclick="showTbl('14.2.4.2',this)">14.2.4.2</button><button class="tt" onclick="showTbl('14.3.1.1',this)">14.3.1.1</button><button class="tt" onclick="showTbl('14.3.1.2',this)">14.3.1.2</button><button class="tt" onclick="showTbl('14.3.3.1',this)">14.3.3.1</button></div>
+  <div class="ttabs" role="toolbar" aria-label="Table selector"><button class="tt on" data-tbl="14.1.1" aria-pressed="true" tabindex="0" onclick="showTbl('14.1.1',this)">14.1.1</button><button class="tt" data-tbl="14.1.2" aria-pressed="false" tabindex="-1" onclick="showTbl('14.1.2',this)">14.1.2</button><button class="tt" data-tbl="14.1.3" aria-pressed="false" tabindex="-1" onclick="showTbl('14.1.3',this)">14.1.3</button><button class="tt" data-tbl="14.2.1.1" aria-pressed="false" tabindex="-1" onclick="showTbl('14.2.1.1',this)">14.2.1.1</button><button class="tt" data-tbl="14.2.4.2" aria-pressed="false" tabindex="-1" onclick="showTbl('14.2.4.2',this)">14.2.4.2</button><button class="tt" data-tbl="14.3.1.1" aria-pressed="false" tabindex="-1" onclick="showTbl('14.3.1.1',this)">14.3.1.1</button><button class="tt" data-tbl="14.3.1.2" aria-pressed="false" tabindex="-1" onclick="showTbl('14.3.1.2',this)">14.3.1.2</button><button class="tt" data-tbl="14.3.3.1" aria-pressed="false" tabindex="-1" onclick="showTbl('14.3.3.1',this)">14.3.3.1</button></div>
   <pre class="tfl" id="tbl-14.1.1" style="display:block">Table 14.1.1  Demographics and Baseline Characteristics
 (Safety Set)
 Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
@@ -409,7 +337,7 @@ Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
   <p class="note">Values are computed from the synthetic data. The full set is in the Final TFL Package under Documents.</p>
 </section>
 
-<section id="qc">
+<section id="qc" role="tabpanel" aria-labelledby="tab-qc" tabindex="0">
   <h2>Independent QC, in R</h2>
   <p>The Python pipeline was re-written from scratch in R and compared cell by cell. Result: PASS with findings.</p>
   <div class="qcgrid">
@@ -435,18 +363,5 @@ Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
 </footer>
 <div class="disc"><b>Demonstration.</b> Protocol HF-1002-CL-101 (fictional) · Phase 1 gene therapy · synthetic data · not for clinical or submission use · built 07 Jun 2026</div>
 </div>
-<script>
-function show(id,btn){var sec=document.getElementById(id);if(!sec)return;
- document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
- sec.classList.add('on');
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>-1));
- if(('#'+id)!==location.hash)history.pushState(null,'','#'+id);
- window.scrollTo({top:0,behavior:'smooth'});}
-function showTbl(num,btn){document.querySelectorAll('pre.tfl').forEach(p=>p.style.display='none');
- document.getElementById('tbl-'+num).style.display='block';
- document.querySelectorAll('.tt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
-window.addEventListener('hashchange',function(){var id=location.hash.slice(1)||'overview';if(document.getElementById(id))show(id);});
-document.querySelectorAll('a.dl').forEach(function(a){a.rel='noopener noreferrer';});
-(function(){var id=location.hash.slice(1);if(id&&document.getElementById(id))show(id);})();
-</script>
+<script src="app.js" defer></script>
 </body></html>
