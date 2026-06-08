@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCS workflow demo: HF-1002-CL-101</title>
+<style>
+:root{--navy:#0A2A5E;--navyd:#051A3D;--red:#E63946;--redl:#FF6B74;--ink:#1A1A1A;--body:#3A3A3A;--slate:#6B7280;--pale:#E8F0FA;--line:#D6DEE8;--paper:#fff;--soft:#F7F9FC;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--mono:'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono','JetBrains Mono',monospace;}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--body);background:#DDE3EC;}
+a{color:var(--navy)}
+code,.mono{font-family:var(--mono)}
+.wrap{max-width:1080px;margin:0 auto;background:var(--paper);box-shadow:0 30px 80px rgba(10,42,94,.18);}
+header{background:var(--navy);color:#fff;padding:30px 40px 26px;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;top:0;right:0;width:300px;height:100%;background:linear-gradient(135deg,#1E4180,var(--navyd));clip-path:polygon(35% 0,100% 0,100% 100%,0 100%);opacity:.6}
+.brand{font-size:13px;font-weight:800;letter-spacing:.04em}
+.brand small{display:block;font-weight:500;font-size:9px;letter-spacing:.12em;opacity:.7;text-transform:uppercase}
+.doclabel{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--redl);text-transform:uppercase;margin:18px 0 6px}
+h1{font-size:31px;font-weight:800;line-height:1.07;letter-spacing:-.02em;margin:0;max-width:660px;position:relative;z-index:2}
+h1 em{color:var(--redl);font-style:normal}
+.sub{margin:12px 0 0;font-size:14px;color:#CADCFC;max-width:640px;position:relative;z-index:2;line-height:1.5}
+nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px;padding:8px 28px}
+nav button{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate);background:none;border:none;padding:9px 14px;border-radius:7px;cursor:pointer}
+nav button.on,nav button.on:hover{background:var(--navy);color:#fff}
+nav button:hover{color:var(--navy)}
+section{display:none;padding:30px 40px}
+section.on{display:block}
+h2{font-size:13px;font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--navy);margin:0 0 14px;display:flex;align-items:center;gap:12px}
+h2::after{content:'';flex:1;height:1px;background:var(--line)}
+h3{font-size:15px;color:var(--navy);margin:22px 0 6px}
+p{line-height:1.55;font-size:14px}
+.lead{font-size:16px;color:var(--ink);font-weight:500;line-height:1.5}
+.lead em{font-style:normal;color:var(--red);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:22px 0}
+.stat{padding:18px;border-right:1px solid var(--line);background:var(--pale)}
+.stat:last-child{border-right:none}
+.sv{font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1}
+.sl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-top:6px;line-height:1.4}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px}
+.stage{background:var(--pale);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;color:var(--navy)}
+.stage .sn{font-family:var(--mono);font-size:9px;color:var(--red);display:block;font-weight:700}
+.stage.qc{background:var(--red);color:#fff;border-color:var(--red)}
+.stage.qc .sn{color:#fff}
+.arr{color:var(--slate);font-size:18px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--soft);display:flex;flex-direction:column}
+.card-tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:700}
+.card-title{font-size:15px;font-weight:700;color:var(--navy);margin:5px 0}
+.card-desc{font-size:12.5px;color:var(--body);line-height:1.4;flex:1}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.fn{font-family:var(--mono);font-size:8.5px;color:var(--slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl{background:var(--navy);color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;white-space:nowrap}
+.dl.sm{padding:3px 9px;font-size:10px}
+.na{color:var(--slate);font-size:10px}
+.data{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:11px;margin:8px 0 4px}
+.data th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px;font-weight:600;font-size:10px}
+.data td{border-bottom:1px solid var(--line);padding:5px 8px;color:var(--ink)}
+.data tr.hl td{background:#FDECEE;font-weight:600}
+.scroll{overflow-x:auto}
+.note{font-size:12.5px;color:var(--slate);margin:6px 0 0}
+.ttabs{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+.tt{font-family:var(--mono);font-size:11px;border:1px solid var(--line);background:#fff;color:var(--navy);padding:5px 10px;border-radius:6px;cursor:pointer;font-weight:600}
+.tt.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+pre.tfl{background:#0c1c34;color:#dfe8f5;font-family:var(--mono);font-size:10.5px;line-height:1.45;padding:16px;border-radius:10px;overflow-x:auto;white-space:pre}
+.qcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 18px}
+.qcbox{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--soft);border-top:4px solid var(--red)}
+.qcbox .v{font-size:30px;font-weight:800;color:var(--navy);line-height:1}
+.qcbox .l{font-size:11.5px;color:var(--body);margin-top:8px;line-height:1.35}
+.find{border-collapse:collapse;width:100%;font-size:12.5px}
+.find th{background:var(--pale);text-align:left;padding:8px;color:var(--navy);border-bottom:1px solid var(--line)}
+.find td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.4}
+.pill{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.pill.ok{background:#E7F4EC;color:#1B7740} .pill.fix{background:#FDECEE;color:#C42A37} .pill.acc{background:#EEF3FB;color:#0A2A5E}
+.scopebox{background:var(--soft);border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.5;color:var(--body)}
+.scopebox b{color:var(--navy)}
+footer{background:var(--navy);color:#fff;padding:18px 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center}
+footer .ft{font-size:13px;font-weight:600}
+footer .fm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9CB2D6;text-align:right}
+.disc{background:var(--soft);border-top:1px solid var(--line);padding:9px 40px;font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--slate)}
+.disc b{color:var(--red)}
+@media(max-width:720px){.cards,.stats,.qcgrid{grid-template-columns:1fr 1fr}h1{font-size:24px}}
+</style></head>
+<body><div class="wrap">
+<header>
+  <div class="brand">CCS<small>Cardiovascular Clinical Sciences</small></div>
+  <div class="doclabel">HF-1002-CL-101 · Workflow demo</div>
+  <h1>One protocol, run from documents to <em>QC'd tables</em></h1>
+  <p class="sub">A worked example on a fictional Phase 1 study. Everything below is a file the pipeline produced: the documents, the data, the tables, and the QC.</p>
+</header>
+<nav>
+  <button class="on" onclick="show('overview',this)">Overview</button>
+  <button onclick="show('docs',this)">Documents</button>
+  <button onclick="show('data',this)">The data</button>
+  <button onclick="show('tables',this)">Tables</button>
+  <button onclick="show('qc',this)">QC</button>
+</nav>
+
+<section id="overview" class="on">
+  <p class="lead">Starting from a fictional Phase 1 protocol, the pipeline wrote the SAP, DMP, and consent form, simulated the EDC data, built the analysis datasets and tables, and ran a <em>separate QC in R</em>. The tabs open the files, show the data, list the tables, and report the QC.</p>
+  <div class="stats">
+    <div class="stat"><div class="sv">9</div><div class="sl">documents and table sets</div></div>
+    <div class="stat"><div class="sv">18</div><div class="sl">subjects · 3 cohorts · ~3,580 EDC rows</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sl">QC cell differences (28,177 checked)</div></div>
+    <div class="stat"><div class="sv">1</div><div class="sl">substantive issue (population label); other findings cosmetic</div></div>
+  </div>
+  <h2>The steps</h2>
+  <div class="flow"><div class="stage"><span class="sn">01</span>Protocol</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">02</span>SAP, DMP, ICF</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">03</span>Mock shells</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">04</span>Simulated EDC</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">05</span>Analysis datasets</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">06</span>Populated tables</div><span class="arr">&rsaquo;</span><div class="stage qc"><span class="sn">07</span>Independent QC (R)</div><span class="arr">&rsaquo;</span><div class="stage"><span class="sn">08</span>Coded package</div></div>
+  <p class="note">Each step writes a file the next one reads. The pipeline is in Python; the QC was written separately in R.</p>
+  <div class="scopebox"><b>Scope.</b> The data is synthetic, made for this demo. The tables are programmed straight from EDC with no CDISC layer, which suits operational and DSMB reporting; submissions still use SDTM and ADaM. Real use would add the usual review and system validation.</div>
+</section>
+
+<section id="docs">
+  <h2>Documents and deliverables</h2>
+  <p>Each card opens a file. They are all in this folder.</p>
+  <div class="cards"><div class="card"><div class="card-tag">Source</div><div class="card-title">Clinical Study Protocol</div><div class="card-desc">The fictional Phase 1 protocol. Everything else is built from this.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Protocol_v1.0_06Jun2026.docx</span><a class="dl" href="HF-1002-CL-101_Protocol_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">SAP</div><div class="card-title">Statistical Analysis Plan</div><div class="card-desc">ICH E9(R1). Estimands written for a single-arm, descriptive design.</div><div class="card-foot"><span class="fn">SAP_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="SAP_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">DMP</div><div class="card-title">Data Management Plan</div><div class="card-desc">Fourteen sections. Domains and edit checks follow the protocol, with a liver-function alert.</div><div class="card-foot"><span class="fn">DMP_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="DMP_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">ICF</div><div class="card-title">Informed Consent Form</div><div class="card-desc">Gene-therapy consent. Passes the compliance check and reads at about grade 7.</div><div class="card-foot"><span class="fn">ICF_HF-1002-CL-101_v1.0_06Jun2026.docx</span><a class="dl" href="ICF_HF-1002-CL-101_v1.0_06Jun2026.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">Shells</div><div class="card-title">Mock TFL Shells</div><div class="card-desc">Twenty-six empty shells, built from the SAP table inventory.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Mock_Shells.docx</span><a class="dl" href="HF-1002-CL-101_Mock_Shells.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">Tables</div><div class="card-title">Final TFL Package</div><div class="card-desc">Nine tables: eight double-programmed in QC, plus the supportive MedDRA SOC/PT table.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_Final_TFL_Package.docx</span><a class="dl" href="HF-1002-CL-101_Final_TFL_Package.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">QC</div><div class="card-title">QC Closure Memo</div><div class="card-desc">The QC result and how each finding was handled.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_QC_Closure_Memo.docx</span><a class="dl" href="HF-1002-CL-101_QC_Closure_Memo.docx" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">QC</div><div class="card-title">QC Report (R)</div><div class="card-desc">The full report from the independent R re-run.</div><div class="card-foot"><span class="fn">QC_Report.md</span><a class="dl" href="QC_Report.md" target="_blank">Open</a></div></div>
+<div class="card"><div class="card-tag">Data</div><div class="card-title">Raw EDC workbook</div><div class="card-desc">Nineteen Rave-style forms, 18 subjects, about 3,580 rows.</div><div class="card-foot"><span class="fn">HF-1002-CL-101_RawEDC_Rave.xlsx</span><a class="dl" href="HF-1002-CL-101_RawEDC_Rave.xlsx" target="_blank">Open</a></div></div>
+</div>
+  <h3>The programs</h3>
+  <table class="find"><thead><tr><th>Program</th><th>What it does</th><th></th></tr></thead><tbody><tr><td><code>01_build_analysis_datasets.py</code></td><td>Reads raw EDC, derives the analysis datasets.</td><td><a class="dl sm" href="01_build_analysis_datasets.py" target="_blank">Open</a></td></tr>
+<tr><td><code>02_generate_tables.py</code></td><td>Reads the analysis datasets, writes the populated tables.</td><td><a class="dl sm" href="02_generate_tables.py" target="_blank">Open</a></td></tr>
+<tr><td><code>03_ae_meddra_soc_pt.py</code></td><td>Applies the coding map and assembles the final package.</td><td><a class="dl sm" href="03_ae_meddra_soc_pt.py" target="_blank">Open</a></td></tr></tbody></table>
+</section>
+
+<section id="data">
+  <h2>From raw EDC to analysis datasets</h2>
+  <p>The pipeline makes Rave-style raw EDC, then derives the analysis datasets. Here is one value followed through the steps: a Grade 3 liver enzyme rise in subject 1002.</p>
+  <h3>1. Raw lab values, subject 1002, ALT</h3>
+  <div class="scroll"><table class="data"><thead><tr><th>Subject</th><th>Visit</th><th>Test</th><th>Result</th><th>Unit</th><th>ULN</th><th>Flag</th></tr></thead><tbody><tr><td>1002</td><td>SCRN</td><td>ALT</td><td>37</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>D1</td><td>ALT</td><td>36</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>D2</td><td>ALT</td><td>37</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr class="hl"><td>1002</td><td>WK2</td><td>ALT</td><td>283</td><td>U/L</td><td>41</td><td>HIGH</td></tr><tr class="hl"><td>1002</td><td>WK4</td><td>ALT</td><td>97</td><td>U/L</td><td>41</td><td>HIGH</td></tr><tr><td>1002</td><td>WK6</td><td>ALT</td><td>36</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>WK8</td><td>ALT</td><td>35</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>WK10</td><td>ALT</td><td>19</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>M3</td><td>ALT</td><td>17</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>M6</td><td>ALT</td><td>32</td><td>U/L</td><td>41</td><td>NORMAL</td></tr><tr><td>1002</td><td>M12</td><td>ALT</td><td>35</td><td>U/L</td><td>41</td><td>NORMAL</td></tr></tbody></table></div>
+  <p class="note">ALT goes above five times the upper limit of normal at Week 2, then comes back down. As collected, uncoded.</p>
+  <h3>2. Raw adverse events, as entered</h3>
+  <div class="scroll"><table class="data"><thead><tr><th>Subject</th><th>Visit</th><th>Verbatim term</th><th>Onset</th><th>Grade</th><th>Serious</th><th>Relationship</th><th>DLT?</th></tr></thead><tbody><tr class="hl"><td>1002</td><td>D1</td><td>Hepatic transaminases increased (ALT &gt;5x ULN)</td><td>11-JUL-2026</td><td>3</td><td>N</td><td>PROBABLY RELATED</td><td>Y</td></tr><tr class="hl"><td>3003</td><td>D1</td><td>Myocarditis</td><td>03-MAR-2027</td><td>3</td><td>Y</td><td>RELATED</td><td>Y</td></tr><tr><td>1001</td><td>D1</td><td>Pyrexia</td><td>15-JUN-2026</td><td>1</td><td>N</td><td>PROBABLY RELATED</td><td>N</td></tr><tr><td>1001</td><td>D1</td><td>Catheterization site haematoma</td><td>15-JUN-2026</td><td>1</td><td>N</td><td>NOT RELATED</td><td>N</td></tr><tr><td>1002</td><td>D1</td><td>Pyrexia</td><td>27-JUN-2026</td><td>2</td><td>N</td><td>PROBABLY RELATED</td><td>N</td></tr><tr><td>1002</td><td>D1</td><td>Catheterization site haematoma</td><td>27-JUN-2026</td><td>1</td><td>N</td><td>NOT RELATED</td><td>N</td></tr><tr><td>1002</td><td>D1</td><td>Transaminases increased</td><td>18-JUL-2026</td><td>2</td><td>N</td><td>POSSIBLY RELATED</td><td>N</td></tr><tr><td>1003</td><td>D1</td><td>Chills</td><td>09-JUL-2026</td><td>1</td><td>N</td><td>PROBABLY RELATED</td><td>N</td></tr><tr><td>1003</td><td>D1</td><td>Catheterization site haematoma</td><td>09-JUL-2026</td><td>1</td><td>N</td><td>NOT RELATED</td><td>N</td></tr><tr><td>1003</td><td>D1</td><td>Nausea</td><td>27-JUL-2026</td><td>1</td><td>N</td><td>POSSIBLY RELATED</td><td>N</td></tr></tbody></table></div>
+  <p class="note">DLT rows are highlighted. No MedDRA coding at this layer.</p>
+  <h3>3. Derived AE dataset, an_ae</h3>
+  <div class="scroll"><table class="data"><thead><tr><th>Subject</th><th>Verbatim term</th><th>AE day</th><th>TEAE</th><th>Related</th><th>Serious</th><th>Gr&gt;=3</th><th>In DLT win</th><th>DLT</th></tr></thead><tbody><tr class="hl"><td>1002</td><td>Hepatic transaminases increased (ALT &gt;5x ULN)</td><td>15</td><td>Y</td><td>Y</td><td>N</td><td>Y</td><td>Y</td><td>Y</td></tr><tr class="hl"><td>3003</td><td>Myocarditis</td><td>29</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr><tr><td>1001</td><td>Pyrexia</td><td>1</td><td>Y</td><td>Y</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1001</td><td>Catheterization site haematoma</td><td>1</td><td>Y</td><td>N</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1002</td><td>Pyrexia</td><td>1</td><td>Y</td><td>Y</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1002</td><td>Catheterization site haematoma</td><td>1</td><td>Y</td><td>N</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1002</td><td>Transaminases increased</td><td>22</td><td>Y</td><td>Y</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1003</td><td>Chills</td><td>1</td><td>Y</td><td>Y</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1003</td><td>Catheterization site haematoma</td><td>1</td><td>Y</td><td>N</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr><tr><td>1003</td><td>Nausea</td><td>19</td><td>Y</td><td>Y</td><td>N</td><td>N</td><td>Y</td><td>N</td></tr></tbody></table></div>
+  <p class="note">The TEAE, relatedness, severity, and DLT flags are worked out once here, then reused by every table.</p>
+  <h3>4. Subject-level dataset, an_subject, all 18</h3>
+  <div class="scroll"><table class="data"><thead><tr><th>Subject</th><th>Site</th><th>Cohort</th><th>Age</th><th>Sex</th><th>BL LVEF</th><th>SAF</th><th>FAS</th><th>DLT-ev</th><th>Compl</th><th>Death</th></tr></thead><tbody><tr><td>1001</td><td>101</td><td>1</td><td>57</td><td>F</td><td>28.9</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>1002</td><td>102</td><td>1</td><td>48</td><td>M</td><td>20.8</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>1003</td><td>103</td><td>1</td><td>76</td><td>M</td><td>19.5</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>1004</td><td>101</td><td>1</td><td>43</td><td>F</td><td>21.5</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>1005</td><td>102</td><td>1</td><td>76</td><td>M</td><td>18.0</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>1006</td><td>103</td><td>1</td><td>52</td><td>M</td><td>29.0</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>2001</td><td>101</td><td>2</td><td>67</td><td>M</td><td>18.9</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>2002</td><td>102</td><td>2</td><td>43</td><td>M</td><td>31.8</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>2003</td><td>103</td><td>2</td><td>60</td><td>F</td><td>19.0</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>2004</td><td>101</td><td>2</td><td>58</td><td>M</td><td>18.6</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr class="hl"><td>2005</td><td>102</td><td>2</td><td>75</td><td>F</td><td>28.0</td><td>Y</td><td>Y</td><td>Y</td><td>N</td><td>Y</td></tr><tr><td>2006</td><td>103</td><td>2</td><td>57</td><td>F</td><td>31.9</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>3001</td><td>101</td><td>3</td><td>61</td><td>F</td><td>26.1</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>3002</td><td>102</td><td>3</td><td>57</td><td>M</td><td>22.3</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>3003</td><td>103</td><td>3</td><td>53</td><td>F</td><td>25.9</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>3004</td><td>101</td><td>3</td><td>61</td><td>M</td><td>22.0</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr><td>3005</td><td>102</td><td>3</td><td>66</td><td>M</td><td>23.1</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>N</td></tr><tr class="hl"><td>3006</td><td>103</td><td>3</td><td>65</td><td>M</td><td>18.8</td><td>Y</td><td>Y</td><td>Y</td><td>N</td><td>N</td></tr></tbody></table></div>
+  <p class="note">Death and non-completion are highlighted. The population flags set every table denominator.</p>
+  <h3>5. MedDRA coding map</h3>
+  <div class="scroll"><table class="data"><thead><tr><th>Verbatim term</th><th>MedDRA PT</th><th>MedDRA SOC</th></tr></thead><tbody><tr><td>Catheterization site haematoma</td><td>Vessel puncture site haematoma</td><td>Injury, poisoning and procedural complications</td></tr><tr><td>Chills</td><td>Chills</td><td>General disorders and administration site conditions</td></tr><tr><td>Pyrexia</td><td>Pyrexia</td><td>General disorders and administration site conditions</td></tr><tr><td>Fatigue</td><td>Fatigue</td><td>General disorders and administration site conditions</td></tr><tr><td>Infusion related reaction</td><td>Infusion related reaction</td><td>Injury, poisoning and procedural complications</td></tr><tr><td>Nausea</td><td>Nausea</td><td>Gastrointestinal disorders</td></tr><tr><td>Headache</td><td>Headache</td><td>Nervous system disorders</td></tr><tr><td>Transaminases increased</td><td>Transaminases increased</td><td>Investigations</td></tr><tr><td>Hepatic transaminases increased (ALT &gt;5x ULN)</td><td>Transaminases increased</td><td>Investigations</td></tr><tr><td>Myocarditis</td><td>Myocarditis</td><td>Cardiac disorders</td></tr><tr><td>Cardiac failure</td><td>Cardiac failure</td><td>Cardiac disorders</td></tr></tbody></table></div>
+  <p class="note">Verbatim terms mapped to preferred term and system organ class. This feeds table 14.3.1.2.</p>
+</section>
+
+<section id="tables">
+  <h2>Populated tables</h2>
+  <p>The table outputs, programmed from the datasets above. Pick a table. 14.3.1.2 is shown in its MedDRA SOC/PT form &mdash; a supportive coding layer outside the R double-programming QC, which covered the by-verbatim version of this table.</p>
+  <div class="ttabs"><button class="tt on" onclick="showTbl('14.1.1',this)">14.1.1</button><button class="tt" onclick="showTbl('14.1.2',this)">14.1.2</button><button class="tt" onclick="showTbl('14.1.3',this)">14.1.3</button><button class="tt" onclick="showTbl('14.2.1.1',this)">14.2.1.1</button><button class="tt" onclick="showTbl('14.2.4.2',this)">14.2.4.2</button><button class="tt" onclick="showTbl('14.3.1.1',this)">14.3.1.1</button><button class="tt" onclick="showTbl('14.3.1.2',this)">14.3.1.2</button><button class="tt" onclick="showTbl('14.3.3.1',this)">14.3.3.1</button></div>
+  <pre class="tfl" id="tbl-14.1.1" style="display:block">Table 14.1.1  Demographics and Baseline Characteristics
+(Safety Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Age (years)
+  n                                               6              6              6             18
+  Mean (SD)                            58.7 (14.19)   60.0 (10.73)    60.5 (4.89)   59.7 (10.04)
+  Median                                       54.5           59.0           61.0           59.0
+  Min, Max                                   43, 76         43, 75         53, 66         43, 76
+Age group, n (%)
+  &lt;65                                      4 (66.7)       4 (66.7)       4 (66.7)      12 (66.7)
+  &gt;=65                                     2 (33.3)       2 (33.3)       2 (33.3)       6 (33.3)
+Sex, n (%)
+  Male                                     4 (66.7)       3 (50.0)       4 (66.7)      11 (61.1)
+  Female                                   2 (33.3)       3 (50.0)       2 (33.3)       7 (38.9)
+Race, n (%)
+  Asian                                    1 (16.7)       1 (16.7)       2 (33.3)       4 (22.2)
+  Black Or African American                2 (33.3)       2 (33.3)       1 (16.7)       5 (27.8)
+  White                                    3 (50.0)       3 (50.0)       3 (50.0)       9 (50.0)
+Baseline LVEF (%)
+  Mean (SD)                             22.9 (4.80)    24.7 (6.58)    23.0 (2.73)    23.6 (4.73)
+  Min, Max                                   18, 29         19, 32         19, 26         18, 32
+Baseline NYHA class III, n (%)            6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+================================================================================================
+
+Source: an_subject (derived from raw EDC dm, el)
+[a] Percentages are based on the number of subjects in each cohort (N).
+[b] Safety Set = all subjects who received any amount of HF-1002.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.1.2" style="display:none">Table 14.1.2  Participant Disposition
+(Enrolled Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Enrolled, n                                       6              6              6             18
+Received HF-1002 (Safety Set), n (%)      6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+Completed Month 12, n (%)                 6 (100.0)       5 (83.3)       5 (83.3)      16 (88.9)
+Discontinued, n (%)                         0 (0.0)       1 (16.7)       1 (16.7)       2 (11.1)
+  Death                                     0 (0.0)       1 (16.7)        0 (0.0)        1 (5.6)
+  Withdrawal by subject                     0 (0.0)        0 (0.0)       1 (16.7)        1 (5.6)
+Entered long-term follow-up, n (%)        6 (100.0)       5 (83.3)       5 (83.3)      16 (88.9)
+================================================================================================
+
+Source: an_subject (derived from raw EDC ds, ex)
+[a] Population aligned to SAP Section 12 (Enrolled Set); Enrolled = Safety Set = 18 in this study (QC F-3).
+[b] Discontinued = did not complete the 12-month primary observation period.
+[c] Percentages are based on the number enrolled in each cohort.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.1.3" style="display:none">Table 14.1.3  Extent of Exposure
+(Safety Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Received complete infusion, n (%)         6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+Assigned dose (vg)                           3.0E13         1.0E14         3.0E14             --
+Infusion volume (mL)
+  Mean (SD)                             22.6 (1.84)    22.1 (2.88)    21.2 (1.40)    21.9 (2.09)
+  Min, Max                                   20, 25         19, 26         20, 23         19, 26
+================================================================================================
+
+Source: an_subject (derived from raw EDC ex)
+[a] A single antegrade intracoronary infusion of HF-1002 was administered on Day 1.
+[b] vg = vector genomes.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.2.1.1" style="display:none">Table 14.2.1.1  Change from Baseline in LVEF (Central Reader)
+(Full Analysis Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Baseline
+  n                                               6              6              6             18
+  Mean (SD)                             23.2 (4.76)    24.4 (6.59)    22.7 (2.95)    23.4 (4.74)
+Month 3
+  n                                               6              6              5             17
+  Value, Mean (SD)                      23.9 (5.00)    26.1 (5.82)    26.8 (2.26)    25.5 (4.61)
+  Change, Mean (SD)                      0.7 (1.95)     1.7 (2.00)     3.2 (0.31)     1.8 (1.88)
+  Change, 95% CI                      (-1.35, 2.75)  (-0.36, 3.83)   (2.82, 3.58)   (0.83, 2.77)
+Month 6
+  n                                               5              6              5             16
+  Value, Mean (SD)                      25.2 (4.85)    27.9 (5.18)    28.2 (2.07)    27.1 (4.26)
+  Change, Mean (SD)                      0.9 (2.02)     3.5 (1.87)     4.6 (1.32)     3.0 (2.29)
+  Change, 95% CI                      (-1.64, 3.36)   (1.56, 5.48)   (3.00, 6.28)   (1.82, 4.26)
+Month 12
+  n                                               6              5              5             16
+  Value, Mean (SD)                      25.0 (4.80)    28.1 (6.82)    29.6 (2.33)    27.4 (5.06)
+  Change, Mean (SD)                      1.9 (1.46)     4.4 (2.29)     6.1 (1.44)     4.0 (2.45)
+  Change, 95% CI                       (0.31, 3.39)   (1.53, 7.23)   (4.29, 7.87)   (2.66, 5.27)
+================================================================================================
+
+Source: an_eff (derived from raw EDC ec)
+[a] Change from Baseline = post-baseline value minus baseline value.
+[b] 95% CI is a descriptive two-sided t-based interval for the mean change; no hypothesis test (Phase 1).
+[c] Observed cases only; n reflects subjects with a value at the visit.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.2.4.2" style="display:none">Table 14.2.4.2  Change from Baseline in KCCQ Overall Summary Score
+(Full Analysis Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Baseline
+  n                                               6              6              6             18
+  Mean (SD)                             46.6 (3.74)    46.5 (6.64)    47.8 (3.14)    47.0 (4.51)
+Month 3
+  n                                               6              6              5             17
+  Value, Mean (SD)                      49.3 (8.49)    51.5 (7.08)    53.0 (3.61)    51.2 (6.62)
+  Change, Mean (SD)                      2.7 (5.99)     4.9 (4.93)     5.3 (3.90)     4.2 (4.90)
+  Change, 95% CI                      (-3.60, 8.97) (-0.23, 10.13)  (0.42, 10.10)   (1.72, 6.76)
+Month 6
+  n                                               5              6              5             16
+  Value, Mean (SD)                      53.9 (7.93)   56.5 (10.19)    58.5 (6.05)    56.3 (8.04)
+  Change, Mean (SD)                      6.5 (4.72)    10.0 (5.42)    10.7 (4.99)     9.1 (5.07)
+  Change, 95% CI                      (0.67, 12.37)  (4.26, 15.64)  (4.53, 16.91)  (6.42, 11.82)
+Month 12
+  n                                               6              5              5             16
+  Value, Mean (SD)                      53.3 (7.55)    59.8 (9.56)    64.9 (3.46)    59.0 (8.46)
+  Change, Mean (SD)                      6.6 (5.44)    12.3 (2.90)    17.2 (4.50)    11.7 (6.15)
+  Change, 95% CI                      (0.93, 12.34)  (8.68, 15.88) (11.60, 22.76)  (8.42, 14.97)
+================================================================================================
+
+Source: an_eff (derived from raw EDC kccq)
+[a] Change from Baseline = post-baseline value minus baseline value.
+[b] 95% CI is a descriptive two-sided t-based interval for the mean change; no hypothesis test (Phase 1).
+[c] Observed cases only; n reflects subjects with a value at the visit.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.3.1.1" style="display:none">Table 14.3.1.1  Overall Summary of Treatment-Emergent Adverse Events
+(Safety Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Any TEAE                                  6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+Any related TEAE                          6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+Any serious TEAE (SAE)                      0 (0.0)       1 (16.7)       1 (16.7)       2 (11.1)
+Any Grade &gt;= 3 TEAE                        1 (16.7)       1 (16.7)       1 (16.7)       3 (16.7)
+Any dose-limiting toxicity                 1 (16.7)        0 (0.0)       1 (16.7)       2 (11.1)
+Deaths                                      0 (0.0)       1 (16.7)        0 (0.0)        1 (5.6)
+================================================================================================
+
+Source: an_ae, an_subject (derived from raw EDC ae)
+[a] A subject is counted once within each category regardless of number of events.
+[b] Related = investigator assessment of possibly, probably, or related.
+[c] TEAE = treatment-emergent adverse event; SAE = serious adverse event.
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.3.1.2" style="display:none">Table 14.3.1.2  TEAEs by System Organ Class and Preferred Term
+(Safety Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Subjects with &gt;= 1 TEAE                   6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+
+Injury, poisoning and procedural com      6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+  Vessel puncture site haematoma          6 (100.0)      6 (100.0)      6 (100.0)     18 (100.0)
+  Infusion related reaction                1 (16.7)       2 (33.3)       1 (16.7)       4 (22.2)
+General disorders and administration       5 (83.3)       4 (66.7)       5 (83.3)      14 (77.8)
+  Chills                                   2 (33.3)       1 (16.7)       4 (66.7)       7 (38.9)
+  Pyrexia                                  3 (50.0)       3 (50.0)       1 (16.7)       7 (38.9)
+  Fatigue                                  1 (16.7)       1 (16.7)        0 (0.0)       2 (11.1)
+Investigations                             2 (33.3)       2 (33.3)       3 (50.0)       7 (38.9)
+  Transaminases increased                  2 (33.3)       2 (33.3)       3 (50.0)       7 (38.9)
+Gastrointestinal disorders                 2 (33.3)       2 (33.3)       2 (33.3)       6 (33.3)
+  Nausea                                   2 (33.3)       2 (33.3)       2 (33.3)       6 (33.3)
+Nervous system disorders                    0 (0.0)       1 (16.7)       2 (33.3)       3 (16.7)
+  Headache                                  0 (0.0)       1 (16.7)       2 (33.3)       3 (16.7)
+Cardiac disorders                           0 (0.0)       1 (16.7)       1 (16.7)       2 (11.1)
+  Cardiac failure                           0 (0.0)       1 (16.7)        0 (0.0)        1 (5.6)
+  Myocarditis                               0 (0.0)        0 (0.0)       1 (16.7)        1 (5.6)
+================================================================================================
+
+Source: an_ae + meddra_coding_map (derived from raw EDC ae)
+[a] MedDRA version 26.1; coding map: analysis_data/meddra_coding_map.csv.
+[b] A subject is counted once per SOC and once per PT regardless of number of events.
+[c] SOCs ordered by decreasing total subject frequency; PTs within SOC likewise.
+[d] Supersedes the by-verbatim-term display (14.3.1.2, supportive).
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre><pre class="tfl" id="tbl-14.3.3.1" style="display:none">Table 14.3.3.1  Dose-Limiting Toxicities by Cohort
+(DLT-Evaluable Set)
+Protocol: HF-1002-CL-101        Sponsor: Corvexa Therapeutics, Inc. (fictional)
+
+================================================================================================
+                                           Cohort 1       Cohort 2       Cohort 3          Total
+                                              (Low)          (Mid)         (High)               
+                                              (N=6)          (N=6)          (N=6)         (N=18)
+------------------------------------------------------------------------------------------------
+Subjects with &gt;= 1 DLT, n (%)              1 (16.7)        0 (0.0)       1 (16.7)       2 (11.1)
+DLT by term, n
+  Hepatic transaminases increased                 1              0              0              1
+  Myocarditis                                     0              0              1              1
+================================================================================================
+
+Source: an_ae (derived from raw EDC ae; DLTFL = AEDLT within DLT window)
+[a] DLT window = Day 1 through Day 29 (Week 4).
+[b] DLT = investigator-assessed related event meeting a protocol-defined DLT criterion.
+[c] Full verbatim term for &#x27;Hepatic transaminases increased...&#x27;: Hepatic transaminases increased (ALT &gt;5x ULN)
+Placeholders: none -- values computed from synthetic EDC data (FICTIONAL).
+</pre>
+  <p class="note">Values are computed from the synthetic data. The full set is in the Final TFL Package under Documents.</p>
+</section>
+
+<section id="qc">
+  <h2>Independent QC, in R</h2>
+  <p>The Python pipeline was re-written from scratch in R and compared cell by cell. Result: PASS with findings.</p>
+  <div class="qcgrid">
+    <div class="qcbox"><div class="v">0</div><div class="l">differences across the four analysis datasets (28,177 cells)</div></div>
+    <div class="qcbox"><div class="v">0</div><div class="l">FAIL cells across all 8 tables (292 compared)</div></div>
+    <div class="qcbox"><div class="v">28/28</div><div class="l">cross-foot checks tied to the SAP and protocol</div></div>
+    <div class="qcbox"><div class="v">1</div><div class="l">substantive inconsistency fixed; other findings display/cosmetic</div></div>
+  </div>
+  <h3>Findings</h3>
+  <table class="find"><thead><tr><th>ID</th><th>Finding</th><th>Status</th></tr></thead><tbody>
+    <tr><td>F-1</td><td>One LVEF cell differs only at an exact x.x5 rounding boundary; the unrounded values match to 15 decimals.</td><td><span class="pill acc">Accepted</span></td></tr>
+    <tr><td>F-3</td><td>Disposition population read "Safety Set" against the SAP "Enrolled Set".</td><td><span class="pill fix">Corrected</span></td></tr>
+    <tr><td>F-4</td><td>A DLT verbatim term was cut short in the display.</td><td><span class="pill fix">Corrected</span></td></tr>
+    <tr><td>F-5</td><td>The change 95% CI showed 1 decimal against the shell's 2.</td><td><span class="pill fix">Corrected</span></td></tr>
+    <tr><td>F-2, F-6</td><td>A QC-side formatting item, and integer counts in the by-term rows.</td><td><span class="pill ok">Resolved</span></td></tr>
+  </tbody></table>
+  <p class="note">F-3 is the one worth noting: the R run flagged a population label that did not match the SAP. The full write-up is in the QC Closure Memo and QC_Report.md under Documents.</p>
+</section>
+
+<footer>
+  <div class="ft">Cardiovascular Clinical Sciences</div>
+  <div class="fm">Boston · ccs.com</div>
+</footer>
+<div class="disc"><b>Demonstration.</b> Protocol HF-1002-CL-101 (fictional) · Phase 1 gene therapy · synthetic data · not for clinical or submission use · built 07 Jun 2026</div>
+</div>
+<script>
+function show(id,btn){var sec=document.getElementById(id);if(!sec)return;
+ document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
+ sec.classList.add('on');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',(b.getAttribute('onclick')||'').indexOf("'"+id+"'")>-1));
+ if(('#'+id)!==location.hash)history.pushState(null,'','#'+id);
+ window.scrollTo({top:0,behavior:'smooth'});}
+function showTbl(num,btn){document.querySelectorAll('pre.tfl').forEach(p=>p.style.display='none');
+ document.getElementById('tbl-'+num).style.display='block';
+ document.querySelectorAll('.tt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+window.addEventListener('hashchange',function(){var id=location.hash.slice(1)||'overview';if(document.getElementById(id))show(id);});
+document.querySelectorAll('a.dl').forEach(function(a){a.rel='noopener noreferrer';});
+(function(){var id=location.hash.slice(1);if(id&&document.getElementById(id))show(id);})();
+</script>
+</body></html>
